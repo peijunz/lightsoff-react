@@ -4,9 +4,9 @@ import './index.css';
 
 function Square(props) {
   if (props.value)
-    return <div className="square square-light" onClick={() => props.onClick()} />;
+    return <div className="square-box"><div className="square square-light" onClick={() => props.onClick()} /></div>;
   else
-    return <div className="square square-dark" onClick={() => props.onClick()} />;
+    return <div className="square-box"><div className="square square-dark" onClick={() => props.onClick()} /></div>;
 }
 
 function calculateWin(squares) {

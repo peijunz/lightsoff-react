@@ -17,7 +17,7 @@ ol, ul {
 .board-row:after {
   clear: both;
   content: "";
-  display: table;
+  display: inline-block;
 }
 
 .status {
@@ -36,13 +36,27 @@ ol, ul {
 /*   line-height: 70px; */
 }
 
+.square {
+  border-radius: 5px;
+  float: left;
+  font-size: 24px;
+  font-weight: bold;
+  padding: 0;
+  text-align: center;
+  transition: all 200ms cubic-bezier(.39,.58,.57,1);
+}
+.square-box {
+  display: inline-block;
+  width: 72px;
+  height: 72px;
+}
+
 .square-dark {
   border: 1px solid #4d4d4d;
   width: 62px;
   height: 62px;
   margin: 4px 4px;
   background-image: linear-gradient(to right, #0d0d0d , #202020);
-/*   background: #000; */
 }
 
 .square-light {
@@ -66,6 +80,7 @@ ol, ul {
   height: 360px;
   width: 360px;
   display: inline-block;
+  font-size: 0;
 }
 
 .kbd-navigation .square:focus {
