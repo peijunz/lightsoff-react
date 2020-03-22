@@ -10,11 +10,21 @@ import {
 //   useParams
 } from "react-router-dom";
 
+const solver = require('./solver');
+const math = require('mathjs');
+
 function Square(props) {
   if (props.value)
     return <div className="square-box"><div className="square square-light" onClick={() => props.onClick()} /></div>;
   else
     return <div className="square-box"><div className="square square-dark" onClick={() => props.onClick()} /></div>;
+}
+
+function is_solvable(squares) {
+  let flat = squares.flat()
+  let ok1 = math.dot(solver.solution[23], flat)%2 === 0;
+  let ok2 = math.dot(solver.solution[24], flat)%2 === 0;
+  return ok1 && ok2;
 }
 
 function calculateWin(squares) {
@@ -83,6 +93,7 @@ class Board extends React.Component {
   }
   componentDidMount() {
     let args = queryString.parse(this.props.location.search);
+    args["q"] = args["q"] || "0";
     let state = (args["q"].startsWith("0b")) ? parseInt(args["q"].slice(2), 2) : parseInt(args["q"] || "0");
     console.log(state);
     let squares = (state === 0 || isNaN(state)) ? random_squares() : encode_squares(state);
@@ -115,8 +126,11 @@ class Board extends React.Component {
     if (calculateWin(this.state.squares)) {
         status = 'You Win!';
     }
+    else if (is_solvable(this.state.squares)) {
+        status = "Turn off all lights";
+    }
     else {
-        status = "Turn off all lights"
+        status = "Unfortunately, this is not solvable";
     }
     const lights = this.state.squares.map((row, i) => this.renderRow(i));
     return (
