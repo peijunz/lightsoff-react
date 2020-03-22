@@ -1,6 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import queryString from 'query-string'
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+//   Link,
+//   useParams
+} from "react-router-dom";
 
 function Square(props) {
   if (props.value)
@@ -48,12 +56,39 @@ function random_squares() {
   return squares;
 }
 
+function encode_squares(masks) {
+  let squares = [
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+  ]
+  for (var i = 0; i < 5; i++) {
+    for (var j = 0; j < 5; j++) {
+      if (masks & (1<<(i*5+j))) {
+        squares[i][j] = 1;
+      }
+    }
+  }
+  return squares;
+}
+
 class Board extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-        squares: random_squares(),
+        squares: encode_squares(0),
     };
+  }
+  componentDidMount() {
+    let args = queryString.parse(this.props.location.search);
+    let state = (args["q"].startsWith("0b")) ? parseInt(args["q"].slice(2), 2) : parseInt(args["q"] || "0");
+    console.log(state);
+    let squares = (state === 0 || isNaN(state)) ? random_squares() : encode_squares(state);
+    this.setState({
+      squares: squares
+    });
   }
   handleClick(i, j) {
     const squares = this.state.squares.slice();
@@ -95,16 +130,12 @@ class Board extends React.Component {
   }
 }
 
-class Game extends React.Component {
-  render() {
-    return <Board  key="board"/>;
-  }
-}
-
-// ========================================
-
 ReactDOM.render(
-  <Game  key="game"/>,
+    <Router>
+    <Switch>
+  <Route path="/" component={Board} />
+</Switch>
+    </Router>,
   document.getElementById('root')
 );
 
