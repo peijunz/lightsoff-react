@@ -1,0 +1,55 @@
+<h1 id="react-learning-notes">React Learning Notes</h1>
+<h2 id="jsx">JSX</h2>
+<p>JSX provides syntactic sugar to create and composite components with simple xml-like tags. JS code inside tags or wrapped by tags should be further wrapped in <code>{}</code>.</p>
+<h2 id="properties-and-states">Properties and States</h2>
+<p>Properties <code>this.props</code> are mainly used for creation of components, and it does not change over time. State <code>this.state</code> could be changed over time by <code>this.setState()</code> and rendering is contigent on state change.</p>
+<p>If a component does not have any internal state, then a function component could sometimes suffice. Note that first letter of function component must be capitalized.</p>
+<p>Pure components is the component whose appearance is only dependent on current props and state, i.e. does not depend on history states. Naturally, functional component is a simple case of pure components.</p>
+<p>Changing variables referenced by current state is a bad practice because react does not know this information and components are not rendered correctly. <code>this.setState()</code> actually does more things than just changing state. As an advantage of <code>setState</code>, we could utilize <code>this.shouldComponentUpdate()</code> to avoid unnecessary rendering.</p>
+<p>For elements in a list, <code>key</code> property is crucial for react to determine the correspondence between old and new elements in case that they are reordered. It is a react keyword rather than an attribute of <code>this.props</code>. Keys is only required to be unique among siblings</p>
+<p>States should only be rooted at react components. Consequently the html elements like textarea, forms, select are reactively controlled by react and their default behaviour is prevented.</p>
+<h3 id="data-and-control">Data and Control</h3>
+<p>There should not be data flow or control transfer between sub-components of a major component. We should lift states up to the common ancestor of these sub-components with interactions. All these interactions are coordinated by the ancestor component.</p>
+<h3 id="lifetime">Lifetime</h3>
+<p><code>componentDidMount()</code> and <code>componentWillUnmount()</code> are in conjugation to control extra resources besides state and props. An example is when we allocated a timer with <code>setInterval</code>, we need to free it when the component is unmounted.</p>
+<h3 id="data-race">Data race</h3>
+<p><code>this.props</code> and <code>this.state</code> could be updated asyncronously. If we depend on some consistency between props and state, then we need to use second form of <code>this.setState</code>:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode jsx"><code class="sourceCode javascriptreact"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">// Correct</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">this</span>.<span class="at">setState</span>((state<span class="op">,</span> props) <span class="kw">=&gt;</span> (<span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a>  <span class="dt">counter</span><span class="op">:</span> <span class="va">state</span>.<span class="at">counter</span> <span class="op">+</span> <span class="va">props</span>.<span class="at">increment</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="op">}</span>))<span class="op">;</span></span></code></pre></div>
+<h3 id="skeleton-of-a-basic-class-component">Skeleton of a basic class component</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode jsx"><code class="sourceCode javascriptreact"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">class</span> Square <span class="kw">extends</span> <span class="va">React</span>.<span class="at">Component</span> <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>  <span class="at">constructor</span>(props) <span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a>    <span class="kw">super</span>(props)<span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a>    <span class="kw">this</span>.<span class="at">state</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a>      <span class="dt">value</span><span class="op">:</span> <span class="kw">null</span><span class="op">,</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a>    <span class="op">};</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a>  <span class="op">}</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a></span>
+<span id="cb2-9"><a href="#cb2-9"></a>  <span class="at">render</span>() <span class="op">{</span></span>
+<span id="cb2-10"><a href="#cb2-10"></a>    <span class="cf">return</span> (</span>
+<span id="cb2-11"><a href="#cb2-11"></a>      <span class="kw">&lt;button</span> <span class="ot">className</span><span class="op">=</span><span class="st">&quot;square&quot;</span> <span class="ot">onClick</span><span class="op">=</span><span class="va">{</span>() <span class="kw">=&gt;</span> <span class="at">alert</span>(<span class="st">&#39;click&#39;</span>)<span class="va">}</span><span class="kw">&gt;</span></span>
+<span id="cb2-12"><a href="#cb2-12"></a>        <span class="va">{</span><span class="kw">this</span>.<span class="va">props</span>.<span class="at">value</span><span class="va">}</span></span>
+<span id="cb2-13"><a href="#cb2-13"></a>      <span class="kw">&lt;/button&gt;</span></span>
+<span id="cb2-14"><a href="#cb2-14"></a>    )<span class="op">;</span></span>
+<span id="cb2-15"><a href="#cb2-15"></a>  <span class="op">}</span></span>
+<span id="cb2-16"><a href="#cb2-16"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="pitfalls">Pitfalls</h3>
+<p>Return false for onclick does not work in react handler. We should explicitly call <code>e.preventDefault()</code> on the element <code>e</code> that is triggered.</p>
+<p>Bind this and args to eventHandler?</p>
+<h3 id="nesting">Nesting</h3>
+<p>It is possible to nest multiple layers between <code>{}</code> and <code>&lt;/&gt;</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode jsx"><code class="sourceCode javascriptreact"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">function</span> <span class="at">Mailbox</span>(props) <span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>  <span class="kw">const</span> unreadMessages <span class="op">=</span> <span class="va">props</span>.<span class="at">unreadMessages</span><span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>  <span class="cf">return</span> (</span>
+<span id="cb3-4"><a href="#cb3-4"></a>    <span class="kw">&lt;div&gt;</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a>      <span class="kw">&lt;h1&gt;</span>Hello!<span class="kw">&lt;/h1&gt;</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a>      <span class="va">{unreadMessages</span>.<span class="at">length</span> <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a>        <span class="kw">&lt;h2&gt;</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a>          You have <span class="va">{unreadMessages</span>.<span class="at">length</span><span class="va">}</span> unread messages.</span>
+<span id="cb3-9"><a href="#cb3-9"></a>        <span class="kw">&lt;/h2&gt;</span></span>
+<span id="cb3-10"><a href="#cb3-10"></a>      <span class="va">}</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a>    <span class="kw">&lt;/div&gt;</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a>  )<span class="op">;</span></span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="op">}</span></span></code></pre></div>

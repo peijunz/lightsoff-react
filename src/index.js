@@ -19,17 +19,40 @@ function calculateWin(squares) {
     }
     return true;
 }
+
+function click_square(squares, i, j) {
+    const neighbors = [[i, j], [i, j+1], [i, j-1], [i+1, j], [i-1, j]];
+    for (var neighbor of neighbors) {
+        let [x, y] = neighbor;
+        if ((0 <= x) && (0 <= y) && (x < squares.length) && (y < squares[0].length)){
+            squares[x][y] = 1 - squares[x][y];
+        }
+    }
+}
+
+function random_squares() {
+  let squares = [
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+  ]
+  for (var i = 0; i < 5; i++) {
+    for (var j = 0; j < 5; j++) {
+      if (Math.random() < 0.5) {
+        click_square(squares, i, j);
+      }
+    }
+  }
+  return squares;
+}
+
 class Board extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-        squares: [
-            [0, 1, 0, 1, 0],
-            [0, 1, 0, 1, 0],
-            [0, 1, 1, 1, 0],
-            [0, 1, 0, 1, 0],
-            [0, 1, 0, 1, 0],
-        ],
+        squares: random_squares(),
     };
   }
   handleClick(i, j) {
@@ -37,13 +60,7 @@ class Board extends React.Component {
     if (calculateWin(squares)) {
         return;
     }
-    const neighbors = [[i, j], [i, j+1], [i, j-1], [i+1, j], [i-1, j]];
-    for (var neighbor of neighbors) {
-        const x = neighbor[0], y = neighbor[1];
-        if ((0 <= x) && (0 <= y) && (x < squares.length) && (y < squares[0].length)){
-            squares[x][y] = 1 - squares[x][y];
-        }
-    }
+    click_square(squares, i, j);
     this.setState({
         squares: squares,
     });
@@ -70,8 +87,9 @@ class Board extends React.Component {
     return (
       <div className="game">
         <div className="game-board">
-        <div className="status">{status}</div><br/>
-        <div className="light-board">{lights}</div></div>
+          <div className="status">{status}</div>
+          <div className="light-board">{lights}</div>
+        </div>
       </div>
     );
   }
