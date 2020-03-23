@@ -35,6 +35,23 @@ ol, ul {
   height: 72px;
 }
 
+.copy-button {
+  border-radius: 5px;
+  margin: 10px 10px;
+  border: 1px solid #5a8abe;
+  transition: all 200ms cubic-bezier(.39,.58,.57,1);
+  background-image: linear-gradient(to right, #0d0d0d , #202020);
+  color: #5a8abe;
+  font-size: 18px;
+  padding: 5px 5px;
+}
+
+.copy-button:active {
+  border: 1px solid #5a8abe;
+  background-image: linear-gradient(to right, #346396 , #5a8abe);
+  color: #000;
+}
+
 .square-dark {
   border: 1px solid #4d4d4d;
   width: 62px;
@@ -87,6 +104,7 @@ ol, ul {
   -webkit-justify-content: center;
           justify-content: center;
 }
+
 
 #root {
   height: 100%;

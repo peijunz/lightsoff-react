@@ -10,6 +10,9 @@ import {
 //   useParams
 } from "react-router-dom";
 
+
+import copy from 'copy-to-clipboard';
+
 const solver = require('./solver');
 
 function Square(props) {
@@ -77,7 +80,7 @@ function encode_squares(masks) {
   return squares;
 }
 
-class Board extends React.Component {
+class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -110,44 +113,71 @@ class Board extends React.Component {
         squares: squares,
     });
   }
+  render() {
+    return (
+      <div className="game">
+        <div className="game-board">
+          <Status squares={ this.state.squares } />
+          <Board squares={ this.state.squares } clickHandler={this.handleClick.bind(this)} />
+          <ShareBoard squares={ this.state.squares } />
+        </div>
+      </div>
+    )
+  }
+}
 
+class ShareBoard extends React.Component {
+  encode_squares() {
+    var mask = 0;
+    for (var i=0; i<5; i++) {
+      for (var j=0; j<5; j++) {
+        mask = (mask << 1) + this.props.squares[5-i-1][5-j-1];
+      }
+    }
+    console.log(mask);
+    return mask;
+  }
+  copyState() {
+    let baseURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "?q=0x";
+    copy(baseURL + this.encode_squares().toString(16));
+  }
+  render() {
+    return <button className="copy-button" onClick={this.copyState.bind(this)}>Copy to Clipboard</button>;
+  }
+}
+
+function Status(props) {
+  let status;
+  if (calculateWin(props.squares))
+      status = 'You Win!';
+  else if (solver.is_solvable(props.squares))
+      status = "Turn off all lights";
+  else
+      status = "Unfortunately, this is not solvable";
+  return <div className="status">{status}</div>
+}
+
+class Board extends React.Component {
+  // need clickHandler
   renderSquare(i, j) {
-    return <Square key={i + "," + j} value={this.state.squares[i][j]} onClick={() => this.handleClick(i, j)}/>;
+    return <Square key={i + "," + j} value={this.props.squares[i][j]} onClick={() => this.props.clickHandler(i, j)}/>;
   }
 
   renderRow(i) {
-    const lights = this.state.squares[i].map((light, j) => this.renderSquare(i, j));
+    const lights = this.props.squares[i].map((light, j) => this.renderSquare(i, j));
     return <div className="board-row" key={"board-row"+i}>{lights}</div>
   }
 
   render() {
-    let status;
-    if (calculateWin(this.state.squares)) {
-        status = 'You Win!';
-    }
-    else if (solver.is_solvable(this.state.squares)) {
-        status = "Turn off all lights";
-    }
-    else {
-        status = "Unfortunately, this is not solvable";
-    }
-    const lights = this.state.squares.map((row, i) => this.renderRow(i));
-    return (
-      <div className="game">
-        <div className="game-board">
-          <div className="status">{status}</div>
-          <div className="light-board">{lights}</div>
-        </div>
-      </div>
-    );
+    return <div className="light-board">{ this.props.squares.map((row, i) => this.renderRow(i)) }</div>;
   }
 }
 
 ReactDOM.render(
     <Router>
-    <Switch>
-  <Route path="/" component={Board} />
-</Switch>
+      <Switch>
+        <Route path="/" component={Game} />
+      </Switch>
     </Router>,
   document.getElementById('root')
 );
