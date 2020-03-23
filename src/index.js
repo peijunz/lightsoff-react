@@ -106,7 +106,8 @@ class Game extends React.Component {
   handleClick(i, j) {
     const squares = this.state.squares.slice();
     if (calculateWin(squares)) {
-        return;
+      window.location.href = getBaseUrl();
+      return;
     }
     click_square(squares, i, j);
     this.setState({
@@ -138,18 +139,21 @@ class ShareBoard extends React.Component {
     return mask;
   }
   copyState() {
-    let baseURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "?q=0x";
-    copy(baseURL + this.encode_squares().toString(16));
+    copy(getBaseUrl() + this.encode_squares().toString(16));
   }
   render() {
     return <button className="copy-button" onClick={this.copyState.bind(this)}>Copy to Clipboard</button>;
   }
 }
 
+function getBaseUrl() {
+  return window.location.protocol + "//" + window.location.host + window.location.pathname;
+}
+
 function Status(props) {
   let status;
   if (calculateWin(props.squares))
-      status = 'You Win!';
+      status = 'You Win! Click for next...';
   else if (solver.is_solvable(props.squares))
       status = "Turn off all lights";
   else
