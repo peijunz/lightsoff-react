@@ -144,7 +144,7 @@ class ShareBoard extends React.Component {
     return mask;
   }
   copyState() {
-    copy(getBaseUrl() + "?q=" + this.encode_squares().toString(16));
+    copy(getBaseUrl() + "?q=0x" + this.encode_squares().toString(16));
   }
   render() {
     return <button className="bottom-button" onClick={this.copyState.bind(this)}>Copy to Clipboard</button>;
