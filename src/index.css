@@ -35,7 +35,7 @@ ol, ul {
   height: 72px;
 }
 
-.copy-button {
+.bottom-button {
   border-radius: 5px;
   margin: 10px 10px;
   border: 1px solid #5a8abe;
@@ -46,7 +46,7 @@ ol, ul {
   padding: 5px 5px;
 }
 
-.copy-button:active {
+.bottom-button:active {
   border: 1px solid #5a8abe;
   background-image: linear-gradient(to right, #346396 , #5a8abe);
   color: #000;

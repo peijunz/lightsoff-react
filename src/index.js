@@ -120,7 +120,12 @@ class Game extends React.Component {
         <div className="game-board">
           <Status squares={ this.state.squares } />
           <Board squares={ this.state.squares } clickHandler={this.handleClick.bind(this)} />
-          <ShareBoard squares={ this.state.squares } />
+          <div>
+            <ShareBoard squares={ this.state.squares } />
+            <button className="bottom-button" onClick={() => (window.location.href = getBaseUrl())}>
+              Next Challenge
+            </button>
+          </div>
         </div>
       </div>
     )
@@ -139,10 +144,10 @@ class ShareBoard extends React.Component {
     return mask;
   }
   copyState() {
-    copy(getBaseUrl() + this.encode_squares().toString(16));
+    copy(getBaseUrl() + "?q=" + this.encode_squares().toString(16));
   }
   render() {
-    return <button className="copy-button" onClick={this.copyState.bind(this)}>Copy to Clipboard</button>;
+    return <button className="bottom-button" onClick={this.copyState.bind(this)}>Copy to Clipboard</button>;
   }
 }
 
@@ -153,7 +158,7 @@ function getBaseUrl() {
 function Status(props) {
   let status;
   if (calculateWin(props.squares))
-      status = 'You Win! Click for next...';
+      status = 'You Win! Next Challenge?';
   else if (solver.is_solvable(props.squares))
       status = "Turn off all lights";
   else
