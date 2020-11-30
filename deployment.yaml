@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lightsoff-app
+  labels:
+    app: lightsoff-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lightsoff-app
+  template:
+    metadata:
+      labels:
+        app: lightsoff-app
+    spec:
+      containers:
+        - image: peijunz/lightsoff-app:0.1.1
+          name: lightsoff-app
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lightsoff-app
+spec:
+  selector:
+    app: lightsoff-app
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
